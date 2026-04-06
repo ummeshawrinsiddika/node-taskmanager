@@ -1,30 +1,44 @@
+ const { isValidateEmail, isValidatePassword, generateOTP, sendEmail } = require("../helpers/utils");
 const authSchema = require("../models/authSchema");
-const { isValidEmail } = require("../helpers/utils");
 
 const registration = async (req, res) => {
   const { fullName, email, password } = req.body;
 
   try {
-    if (!fullName?.trim())
-      return res.status(400).send({ message: "FullName is required." });
-    if (!email) return res.status(400).send({ message: "Email is required." });
-    if (!isValidEmail(email))
-      return res.status(400).send({ message: "Email is invalid." });
-    if (!password)
-      return res.status(400).send({ message: "Password is required." });
+    // duplicate email check
+    const existingUser = await authSchema.findOne({ email });
+    if (existingUser)
+      return res
+        .status(400)
+        .send({ success: false, message: "email already exist" });
 
-    const existEmail = await authSchema.findOne({ email });
+    // name check
+    if (!fullName?.trim()) return res.status(400).send({ message: "FullName is required." });
 
-    if (existEmail)
-      return res.status(400).send({ message: "This email already registered" });
+    // email check
+    if (!email) return res.status(400).send("email is required");
+    if (!isValidateEmail(email)) return res.status(400).send({ message: "Email is invalid." });
 
-    const user = await authSchema({ fullName, email, password });
+    // password check
+    if (!password) return res.status(400).send("password is required");
+    if (!isValidatePassword(password))
+      return res.status(400).send("password not valid");
+
+    // OTP generate and send
+    const otp = generateOTP();
+    await sendEmail(email, otp);
+
+    // save user
+    const user = await authSchema({ fullName, email, password, otp });
     user.save();
 
-    res.status(200).send({ message: "Registration Successfully Please verify your email" });
+    res.status(200).send({
+      success: true,
+      message: "Register successfull Please verify your email",
+    });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "Internal Server Error!" });
+    res.status(500).send({ success: false, message: "Internal server Error" });
   }
 };
 
