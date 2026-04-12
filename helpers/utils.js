@@ -1,3 +1,4 @@
+ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
 function isValidateEmail(email) {
@@ -10,14 +11,11 @@ function isValidatePassword(password) {
   return passwordRagex.test(password);
 }
 
-// 6 digit OTP generate
 const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-// email send
 const sendEmail = async (email, otp) => {
-  console.log("OTP:", otp);
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -34,4 +32,14 @@ const sendEmail = async (email, otp) => {
   });
 };
 
-module.exports = { isValidateEmail, isValidatePassword, generateOTP, sendEmail };
+const generateAccessToken = (payload) => {
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
+};
+
+module.exports = { 
+  isValidateEmail, 
+  isValidatePassword, 
+  generateOTP, 
+  sendEmail,
+  generateAccessToken 
+};

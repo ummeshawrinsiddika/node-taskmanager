@@ -1,4 +1,4 @@
-const { generateAccessToken, isValidateEmail, isValidatePassword, generateOTP } = require("../helpers/utils");
+const { generateAccessToken, isValidateEmail, validatePassword, generateOTP } = require("../helpers/utils");
 const authSchema = require("../models/authSchema");
 const { mailsending } = require("../helpers/mailServices");
 
@@ -9,7 +9,7 @@ const registration = async (req, res) => {
     if (!email) return res.status(400).send({ message: "email is required" });
     if (!isValidateEmail(email)) return res.status(400).send({ message: "email is invalid" });
     if (!password) return res.status(400).send({ message: "password is required" });
-    if (!isValidatePassword(password)) return res.status(400).send({ message: "password is invalid" });
+    if (!validatePassword(password)) return res.status(400).send({ message: "password is invalid" });
 
     const existingUser = await authSchema.findOne({ email });
     if (existingUser) return res.status(400).send({ message: "This Email is already registered" });
