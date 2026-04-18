@@ -1,11 +1,21 @@
  const express = require("express");
-const { registration, verifyOTP, login, userProfile } = require("../controllars/authController");
-const { authMiddleware } = require("./middleware");
+const multer  = require('multer')
+const upload = multer()
+
+const {
+  registration,
+  verifyOTP,
+  login,
+  userProfile,
+  updateProfile,
+} = require("../controllers/authController");
+const { authmiddleware } = require("../middleware/authMiddleware");
 const router = express.Router();
 
 router.post("/registration", registration);
 router.post("/verify-otp", verifyOTP);
 router.post("/login", login);
-router.get("/profile", authMiddleware, userProfile);
+router.post("/profile", authmiddleware, userProfile);
+router.put("/update-profile",authmiddleware,upload.single("avatar"), updateProfile)
 
 module.exports = router;

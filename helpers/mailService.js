@@ -6,12 +6,12 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: "nilporidreamgirl123@gmail.com",
-    pass: "hzyc pfmv kqlv wnmc"
+    user: process.env.EMAIL,
+    pass: process.env.EMAIL_PASSWORD,
   },
 });
 
-const mailsending = async({ email, subject, otp }) => {
+const mailsender = async ({ email, subject, otp, fullName }) => {
   try {
     await transporter.sendMail({
       from: '"Task Team" <team@taskmanager.com>',
@@ -20,8 +20,8 @@ const mailsending = async({ email, subject, otp }) => {
       html: otpTemplate(otp),
     });
   } catch (error) {
-    console.log("Error while sending mail", error);  
+    console.log("Error while sending mail", error);
   }
-}
+};
 
-module.exports = { mailsending }
+module.exports = { mailsender };

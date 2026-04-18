@@ -1,8 +1,10 @@
- const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
 const dbConfig = async () => {
   try {
-    await mongoose.connect(process.env.DB_URL);
+    const url = process.env.DB_URL;
+    console.log("DB_URL:", url);
+    await mongoose.connect(url);
     console.log("Database connected successfully");
   } catch (error) {
     console.log("Database connection failed", error);
@@ -10,4 +12,3 @@ const dbConfig = async () => {
 };
 
 module.exports = dbConfig;
- 

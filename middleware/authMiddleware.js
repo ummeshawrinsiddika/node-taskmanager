@@ -1,6 +1,5 @@
  const jwt = require("jsonwebtoken");
-
-const authMiddleware = (req, res, next) => {
+const authmiddleware = (req, res, next) => {
   try {
     const { accessToken } = req.cookies;
     const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
@@ -8,11 +7,10 @@ const authMiddleware = (req, res, next) => {
       req.user = decoded;
       next();
     } else {
-      res.status(401).send({ message: "Unauthorized request" });
+      res.status(401).send({ message: "unauthorized request" });
     }
   } catch (error) {
-    res.status(401).send({ message: "Unauthorized request" });
+    res.status(401).send({ message: "unauthorized request" });
   }
 };
-
-module.exports = { authMiddleware };
+module.exports = { authmiddleware };
